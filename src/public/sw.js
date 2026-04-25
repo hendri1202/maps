@@ -1,11 +1,9 @@
 const CACHE_NAME = 'map-story-v1';
 const BASE_URL = 'https://story-api.dicoding.dev/v1';
 
-const APP_SHELL = [
+const PRECACHE_ASSETS = [
   '/',
   '/index.html',
-  '/styles/app.css',
-  '/scripts/index.js',
   '/favicon.png',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
@@ -15,7 +13,7 @@ const APP_SHELL = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(APP_SHELL);
+      return cache.addAll(PRECACHE_ASSETS);
     }),
   );
   self.skipWaiting();
@@ -41,7 +39,11 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   if (url.origin === location.origin) {
-    event.respondWith(cacheFirst(request));
+    if (url.pathname.startsWith('/assets/')) {
+      event.respondWith(cacheFirst(request));
+    } else {
+      event.respondWith(cacheFirst(request));
+    }
     return;
   }
 
@@ -64,10 +66,16 @@ async function cacheFirst(request) {
 
   try {
     const networkResponse = await fetch(request);
-    const cache = await caches.open(CACHE_NAME);
-    cache.put(request, networkResponse.clone());
+    if (networkResponse.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, networkResponse.clone());
+    }
     return networkResponse;
   } catch {
+    if (request.destination === 'document') {
+      const fallback = await caches.match('/index.html');
+      if (fallback) return fallback;
+    }
     return new Response('Offline', { status: 503, statusText: 'Offline' });
   }
 }
@@ -75,8 +83,10 @@ async function cacheFirst(request) {
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
-    const cache = await caches.open(CACHE_NAME);
-    cache.put(request, networkResponse.clone());
+    if (networkResponse.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, networkResponse.clone());
+    }
     return networkResponse;
   } catch {
     const cached = await caches.match(request);
@@ -93,9 +103,11 @@ async function staleWhileRevalidate(request) {
 
   const fetchPromise = fetch(request)
     .then((networkResponse) => {
-      caches.open(CACHE_NAME).then((cache) => {
-        cache.put(request, networkResponse.clone());
-      });
+      if (networkResponse.ok) {
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(request, networkResponse.clone());
+        });
+      }
       return networkResponse;
     })
     .catch(() => cached);
@@ -152,7 +164,7 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url.includes(targetUrl) && 'focus' in client) {
+        if ('focus' in client) {
           return client.focus();
         }
       }

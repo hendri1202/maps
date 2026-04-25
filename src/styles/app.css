@@ -505,3 +505,46 @@ h2:focus, main:focus { outline: none; }
   .story-list-section { max-height: 600px; }
   .map-container { height: 600px; }
 }
+
+.detail-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.detail-card {
+  background: #fff;
+  border-radius: var(--radius);
+  border: 1px solid var(--c-border);
+  overflow: hidden;
+  margin-top: 1rem;
+}
+.detail-photo {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  display: block;
+  background: #eee;
+}
+.detail-info {
+  padding: 1.5rem;
+}
+.detail-info h2 {
+  margin: 0 0 0.3rem;
+  font-size: 1.3rem;
+}
+.detail-info time {
+  display: block;
+  color: #888;
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+}
+.detail-desc {
+  line-height: 1.7;
+  color: #444;
+  white-space: pre-wrap;
+}
+.detail-back-btn {
+  display: inline-block;
+  margin-top: 1.2rem;
+  text-decoration: none;
+  padding: 0.6rem 1.2rem;
+}

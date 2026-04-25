@@ -1,4 +1,4 @@
-import { getActiveRoute } from '../routes/url-parser.js';
+import { getActiveRoute, getActivePathId } from '../routes/url-parser.js';
 import { routes } from '../routes/routes.js';
 import { getAccessToken, getLogout } from '../utils/auth.js';
 import { subscribe, unsubscribe, isSubscribed } from '../utils/push-helper.js';
@@ -179,7 +179,8 @@ export default class App {
       this.#currentPage.onDestroy();
     }
 
-    const page = route();
+    const pathId = getActivePathId();
+    const page = route(pathId);
     this.#currentPage = page;
 
     const renderContent = async () => {

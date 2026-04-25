@@ -51,6 +51,20 @@ export async function getAllStories() {
   };
 }
 
+export async function getStoryDetail(id) {
+  const accessToken = getAccessToken();
+
+  const fetchResponse = await fetch(`${ENDPOINTS.STORIES}/${id}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  const json = await fetchResponse.json();
+
+  return {
+    ...json,
+    ok: fetchResponse.ok,
+  };
+}
+
 export async function storeNewStory(formData) {
   const accessToken = getAccessToken();
 
