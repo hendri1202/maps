@@ -18,7 +18,7 @@ export default class HomePresenter {
       if (!response.ok) {
         const cached = await this.#idb.getAllCachedStories();
         if (cached.length > 0) {
-          await this.#view.populateStoryList('Dari cache', cached);
+          await this.#view.populateStoryList("Dari cache", cached);
           return;
         }
         this.#view.populateStoryListError(response.message);
@@ -36,12 +36,10 @@ export default class HomePresenter {
       try {
         const cached = await this.#idb.getAllCachedStories();
         if (cached.length > 0) {
-          await this.#view.populateStoryList('Dari cache (offline)', cached);
+          await this.#view.populateStoryList("Dari cache (offline)", cached);
           return;
         }
-      } catch {
-        // ignore
-      }
+      } catch {}
       this.#view.populateStoryListError(error.message);
     }
   }

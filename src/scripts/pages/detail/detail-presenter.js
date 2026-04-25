@@ -19,7 +19,7 @@ export default class DetailPresenter {
           this.#view.showDetail(cached);
           return;
         }
-        this.#view.showError(response.message || 'Cerita tidak ditemukan.');
+        this.#view.showError(response.message || "Cerita tidak ditemukan.");
         return;
       }
 
@@ -31,9 +31,7 @@ export default class DetailPresenter {
           this.#view.showDetail(cached);
           return;
         }
-      } catch {
-        // ignore
-      }
+      } catch {}
       this.#view.showError(error.message);
     }
   }
